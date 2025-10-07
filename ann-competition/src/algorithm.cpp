@@ -31,7 +31,7 @@
  * - Memory usage
  * - Build time
  */
-class StudentAlgorithm : public ANNAlgorithm {
+class VectorDBKernel : public ANNAlgorithm {
 public:
     void init(const std::string& metric, int dimension) override {
         metric_ = metric;
@@ -98,7 +98,7 @@ public:
     }
 
     std::string name() const override {
-        return "StudentOptimized_SIMD_OpenMP";
+        return "VectorDBKernel_SIMD_OpenMP";
     }
 
 private:
@@ -283,6 +283,6 @@ private:
 };
 
 // Factory function
-extern "C" ANNAlgorithm* create_student_algorithm() {
-    return new StudentAlgorithm();
+extern "C" ANNAlgorithm* create_vectordb_kernel() {
+    return new VectorDBKernel();
 }

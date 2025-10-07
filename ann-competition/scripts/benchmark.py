@@ -3,9 +3,9 @@
 Main benchmark script.
 
 Usage:
-    python scripts/benchmark.py --impl student
+    python scripts/benchmark.py --impl vectordb
     python scripts/benchmark.py --impl naive --dataset nytimes-256-angular
-    python scripts/benchmark.py --impl student --compare naive
+    python scripts/benchmark.py --impl vectordb --compare naive
 """
 
 import argparse
@@ -30,8 +30,8 @@ def main():
     )
     parser.add_argument(
         '--impl',
-        choices=['naive', 'student'],
-        default='student',
+        choices=['naive', 'vectordb'],
+        default='vectordb',
         help='Implementation to benchmark'
     )
     parser.add_argument(

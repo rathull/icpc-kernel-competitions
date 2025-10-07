@@ -7,7 +7,7 @@ namespace py = pybind11;
 
 // Forward declarations for factory functions
 extern "C" ANNAlgorithm* create_naive_algorithm();
-extern "C" ANNAlgorithm* create_student_algorithm();
+extern "C" ANNAlgorithm* create_vectordb_kernel();
 
 /**
  * Python wrapper for C++ ANNAlgorithm.
@@ -18,8 +18,8 @@ public:
     PyANNWrapper(const std::string& impl_type, const std::string& metric) {
         if (impl_type == "naive") {
             algo_ = create_naive_algorithm();
-        } else if (impl_type == "student") {
-            algo_ = create_student_algorithm();
+        } else if (impl_type == "vectordb") {
+            algo_ = create_vectordb_kernel();
         } else {
             throw std::runtime_error("Unknown implementation: " + impl_type);
         }
@@ -87,7 +87,7 @@ PYBIND11_MODULE(ann_cpp, m) {
              py::arg("metric"),
              "Create ANN algorithm.\n\n"
              "Args:\n"
-             "    impl_type: 'naive' or 'student'\n"
+             "    impl_type: 'naive' or 'vectordb'\n"
              "    metric: 'euclidean' or 'angular'")
         .def("fit", &PyANNWrapper::fit,
              py::arg("X"),

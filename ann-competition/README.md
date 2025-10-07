@@ -10,99 +10,43 @@ Everything else is handled by the framework!
 
 ### Quick Start
 
+MacOS instructions:
 ```bash
-# 1. Clone the repository
-git clone <repo-url> ann-competition
+# 1. Intstall uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 2. Install system dependencies
+# Install Homebrew if you don't have it
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Install required packages
+brew install cmake libomp
+
+# 3. Clone and setup
+git clone https://github.com/rathull/icpc-kernel-competitions.git
 cd ann-competition
-
-# 2. Install dependencies
 make setup
-
-# 3. Build your code
 make build
-
-# 4. Test it works
+make test
 make quick
 
-# 5. Benchmark on real data
+# 4. Benchmark on real data
 make benchmark
 ```
 
-**👉 New here? Read:**
-- [QUICKSTART.md](QUICKSTART.md) - 30 seconds
-- [SETUP_VERIFICATION.md](SETUP_VERIFICATION.md) - Verify your setup works
-- [GETTING_STARTED.md](GETTING_STARTED.md) - Complete guide
-
-## 📋 What You Get
-
-- ✅ **Simple Interface**: Implement 4 methods, that's it!
-- ✅ **Fast Iteration**: Quick tests on synthetic data (< 10 seconds)
-- ✅ **Comprehensive Metrics**: Recall, QPS, latency, memory usage
-- ✅ **Real Datasets**: GIST-960 automatically downloaded
-- ✅ **Reference Implementation**: Study the naive brute-force baseline
-- ✅ **Modern Tools**: Uses `uv` for dependency management
-- ✅ **Cross-Platform**: Works on x86_64 and ARM64 (Apple Silicon)
-- ✅ **Cloud Benchmarking**: Modal integration with 32 CPU cores
-- ✅ **Persistent Storage**: Datasets cached in Modal volumes
-
-## 🏆 Competition Metrics
-
-| Metric | Target | Priority |
-|--------|--------|----------|
-| **Recall@10** | ≥ 90% | ✅ Required |
-| **QPS** | Maximize | 🥇 Primary |
-| **Latency (p95)** | Minimize | 🥈 Secondary |
-| **Memory** | Minimize | 🥉 Tertiary |
-| **Build Time** | Minimize | Bonus |
-
-## 🛠 Available Commands
-
-### Local Development
+Modal setup:
 ```bash
-make setup      # Install dependencies with uv
-make build      # Build C++ extensions
-make clean      # Clean build artifacts
-make quick      # Quick test on synthetic data (~10s)
-make test       # Run full test suite
-make benchmark  # Full benchmark on GIST dataset (~5min)
-make compare    # Compare your impl vs naive baseline
-make help       # Show all commands
-```
+#1. Install Modal CLI
+make modal-setup
 
-### Cloud Benchmarking (32 CPU cores)
-```bash
-# One-time authentication (after make setup)
-modal token new         # Create free Modal account (2 minutes)
+# 2. Authenticate with Modal
+uv run modal login
+uv run modal token new
 
-# Then everything is automatic!
-make modal-benchmark    # ✅ Auto-downloads dataset, runs on 32 cores
-make modal-compare      # Compare implementations on Modal
-```
+# 3. Download dataset to persistent volume
+make modal-download
 
-**👉 See [MODAL_GUIDE.md](MODAL_GUIDE.md) or [COMPLETE_WORKFLOW.md](COMPLETE_WORKFLOW.md) for details!**
-
-## 📁 Repository Structure
-
-```
-ann-competition/
-├── src/
-│   ├── algorithm.cpp          ← YOU EDIT THIS FILE
-│   ├── naive_algorithm.cpp    (reference implementation)
-│   └── bindings.cpp           (Python bindings - don't touch)
-│
-├── include/
-│   ├── ann_interface.hpp      (interface definition)
-│   └── dataset.hpp            (dataset configs)
-│
-├── scripts/
-│   ├── quick_test.py          (fast testing)
-│   └── benchmark.py           (full evaluation)
-│
-├── python/                    (benchmarking framework)
-├── results/                   (benchmark outputs)
-├── GETTING_STARTED.md         (detailed guide)
-└── Makefile                   (convenient commands)
-```
+# 4. Run benchmark on 64 threads!
+make modal-benchmark
 
 ## 💻 The Interface
 
@@ -130,148 +74,25 @@ public:
 };
 ```
 
-## 🚀 Optimization Ideas
+# Optimization Ideas
 
-### Beginner
-- ✅ OpenMP parallelization (`#pragma omp parallel for`)
-- ✅ SIMD instructions (AVX2/NEON)
-- ✅ Better memory layout
+- OpenMP pragmas
+- SIMD instructions (AVX2)
+- Improve memory layout
 
-### Intermediate
-- 🎯 HNSW (Hierarchical Navigable Small World)
-- 🎯 IVF (Inverted File Index)
-- 🎯 LSH (Locality Sensitive Hashing)
+Algorithms to try:
+- HNSW (Hierarchical Navigable Small World)
+- IVF (Inverted File Index)
+- LSH (Locality Sensitive Hashing)
 
-### Advanced
-- 🔥 Product Quantization
-- 🔥 Graph pruning strategies
-- 🔥 Hybrid algorithms
+Advanced:
+- Product quantization
+- Binary quantize queries or index
+- LUT for distance calculation
+- Graph pruning
 
-## 📊 Example Results
-
-```
-SUMMARY
-============================================================
-Algorithm:     StudentImplementation
-Dataset:       gist-960-euclidean
-Build time:    12.34s
-Memory:        2048.0 MB
-Recall@10:     0.9523
-QPS:           8234.5
-Latency (p50): 1.23ms
-Latency (p95): 4.56ms
-Latency (p99): 7.89ms
-```
-
-## 🔧 Requirements
-
-- **C++ Compiler**: GCC 7+, Clang 8+, or MSVC 2019+
-- **Python**: 3.9 or higher
-- **CMake**: 3.15 or higher
-- **uv**: Python package manager ([install](https://docs.astral.sh/uv/))
-- **OpenMP**: Usually included with compiler
-
-### macOS
-
-```bash
-# Install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Compiler and CMake (via Homebrew)
-brew install cmake libomp
-```
-
-### Linux
-
-```bash
-# Install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Ubuntu/Debian
-sudo apt-get install build-essential cmake libomp-dev
-
-# Fedora/RHEL
-sudo dnf install gcc-c++ cmake libomp-devel
-```
-
-### Windows
-
-```bash
-# Install uv
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-# Install Visual Studio 2019+ with C++ support
-# Install CMake from https://cmake.org/download/
-```
-
-## 📚 Resources
-
-- **[GETTING_STARTED.md](GETTING_STARTED.md)** - Complete setup and development guide
-- **[include/ann_interface.hpp](include/ann_interface.hpp)** - Interface documentation
-- **[src/naive_algorithm.cpp](src/naive_algorithm.cpp)** - Reference implementation
-- **[HNSW Paper](https://arxiv.org/abs/1603.09320)** - State-of-the-art ANN algorithm
-- **[FAISS](https://github.com/facebookresearch/faiss)** - Facebook's ANN library (for reference)
-
-## 🐛 Troubleshooting
-
-### Build fails with "uv not found"
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-# Restart your terminal
-```
-
-### Module 'ann_cpp' not found
-```bash
-make clean
-make build
-```
-
-### OpenMP not found
-```bash
-# macOS
-brew install libomp
-
-# Linux
-sudo apt-get install libomp-dev  # Ubuntu/Debian
-sudo dnf install libomp-devel     # Fedora/RHEL
-```
-
-### Slow first benchmark run
-The first run downloads ~3.6GB of data. Subsequent runs use cached data.
-
-## 🏅 Submission
-
-When ready to submit:
-1. Make sure `make test` passes
-2. Run `make benchmark` to generate results
-3. Submit:
-   - Your modified `src/algorithm.cpp`
-   - Any additional files you created
-   - Brief writeup explaining your approach
-   - The results JSON from `results/` directory
-
-## 📖 Documentation
-
-- **[GETTING_STARTED.md](GETTING_STARTED.md)** - Start here! Complete guide for competitors
-- **Makefile** - Run `make help` to see all available commands
-- **Code Comments** - `src/algorithm.cpp` has extensive inline documentation
-
-## 🤝 Contributing
-
-For instructors setting up competitions:
-1. Fork this repository
-2. Customize datasets in `python/dataset_loader.py`
-3. Adjust metrics/scoring in `python/metrics.py`
-4. Update competition rules in `GETTING_STARTED.md`
-
-## 📜 License
-
-This project is provided as-is for educational purposes.
 
 ## 🎓 Credits
 
-Built for ICPC-style programming competitions focusing on algorithmic optimization and systems programming.
+Built for ACM ICPC at UCLA's Fall 2025 kernel competitions.
 
----
-
-**Ready to compete? Read [GETTING_STARTED.md](GETTING_STARTED.md) and start coding! 🚀**

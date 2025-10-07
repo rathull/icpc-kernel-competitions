@@ -70,7 +70,7 @@ private:
     /**
      * Compute distance between two vectors.
      * 
-     * TODO for students:
+     * TODO for VectorDBKernel implementation:
      * 1. Vectorize with SIMD intrinsics (_mm256_*)
      * 2. Use FMA instructions if available
      * 3. Consider loop unrolling

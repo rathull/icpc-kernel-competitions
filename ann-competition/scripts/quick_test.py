@@ -76,7 +76,7 @@ def create_synthetic_data(n_samples=1000, dimension=128):
     return train, test
 
 
-def test_algorithm(impl='student', metric='euclidean'):
+def test_algorithm(impl='vectordb', metric='euclidean'):
     """Quick functionality test."""
     print(f"Testing {impl} implementation with {metric} metric")
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     import argparse
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--impl', default='student', choices=['naive', 'student'])
+    parser.add_argument('--impl', default='vectordb', choices=['naive', 'vectordb'])
     parser.add_argument('--metric', default='euclidean', choices=['euclidean', 'angular'])
     
     args = parser.parse_args()

@@ -6,7 +6,7 @@
 
 /**
  * Core interface for ANN algorithms.
- * Students implement this interface in student_algorithm.cpp
+ * VectorDBKernel implements this interface in algorithm.cpp
  */
 class ANNAlgorithm {
 public:

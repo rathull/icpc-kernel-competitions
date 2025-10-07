@@ -9,7 +9,7 @@ help:
 	@echo "  make quick      - Quick test on synthetic data"
 	@echo "  make test       - Run full test suite"
 	@echo "  make benchmark  - Run full benchmark on GIST dataset"
-	@echo "  make compare    - Compare student vs naive implementation"
+	@echo "  make compare    - Compare vectordb vs naive implementation"
 	@echo ""
 	@echo "Modal Commands (32 CPU cores, persistent datasets):"
 	@echo "  make modal-setup        - Install Modal package"
@@ -46,20 +46,20 @@ clean:
 
 quick: build
 	@echo "Running quick test..."
-	uv run python scripts/quick_test.py --impl student
+	uv run python scripts/quick_test.py --impl vectordb
 
 test: build
 	@echo "Running test suite..."
 	uv run python scripts/quick_test.py --impl naive
-	uv run python scripts/quick_test.py --impl student
+	uv run python scripts/quick_test.py --impl vectordb
 
 benchmark: build
 	@echo "Running full benchmark..."
-	uv run python scripts/benchmark.py --impl student --output results/benchmark_$$(date +%Y%m%d_%H%M%S).json
+	uv run python scripts/benchmark.py --impl vectordb --output results/benchmark_$$(date +%Y%m%d_%H%M%S).json
 
 compare: build
 	@echo "Comparing implementations..."
-	uv run python scripts/benchmark.py --impl student --compare naive
+	uv run python scripts/benchmark.py --impl vectordb --compare naive
 
 # Modal commands (requires modal package)
 modal-setup:
@@ -74,15 +74,15 @@ modal-download:
 
 modal-benchmark:
 	@echo "Running benchmark on Modal (32 CPU cores)..."
-	uv run modal run modal_app.py --impl student
+	uv run modal run modal_app.py --impl vectordb
 
 modal-compare:
 	@echo "Comparing implementations on Modal..."
-	uv run modal run modal_app.py --impl student --compare naive
+	uv run modal run modal_app.py --impl vectordb --compare naive
 
 modal-benchmark-custom:
 	@echo "Usage: make modal-benchmark-custom IMPL=<impl> DATASET=<dataset>"
-	@echo "Example: make modal-benchmark-custom IMPL=student DATASET=nytimes-256-angular"
+	@echo "Example: make modal-benchmark-custom IMPL=vectordb DATASET=nytimes-256-angular"
 	uv run modal run modal_app.py --impl $(IMPL) --dataset $(DATASET)
 
 # Development helpers

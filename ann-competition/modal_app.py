@@ -2,9 +2,9 @@
 Modal app for running ANN benchmarks on powerful hardware.
 
 Usage:
-    modal run modal_app.py --impl student
-    modal run modal_app.py --impl student --dataset nytimes-256-angular
-    modal run modal_app.py --impl student --compare naive
+    modal run modal_app.py --impl vectordb
+    modal run modal_app.py --impl vectordb --dataset nytimes-256-angular
+    modal run modal_app.py --impl vectordb --compare naive
 """
 
 import modal
@@ -100,7 +100,7 @@ def _download_dataset_internal(dataset):
     memory=32768,  # 32GB RAM
     timeout=3600,  # 1 hour timeout
 )
-def run_benchmark(impl="student", dataset="gist-960-euclidean", compare=None, k=10):
+def run_benchmark(impl="vectordb", dataset="gist-960-euclidean", compare=None, k=10):
     """Run ANN benchmark on Modal with high-performance hardware."""
     import subprocess
     import os
@@ -333,7 +333,7 @@ def download_dataset(dataset="gist-960-euclidean"):
 
 @app.local_entrypoint()
 def main(
-    impl: str = "student",
+    impl: str = "vectordb",
     dataset: str = "gist-960-euclidean", 
     compare: str = None,
     k: int = 10,
