@@ -20,6 +20,7 @@ build/
 *.dylib
 *.dll
 *.exe
+*.egg-info/
 
 # CMake
 CMakeFiles/

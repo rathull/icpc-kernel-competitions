@@ -11,9 +11,12 @@ help:
 	@echo "  make benchmark  - Run full benchmark on GIST dataset"
 	@echo "  make compare    - Compare student vs naive implementation"
 	@echo ""
-	@echo "Modal Commands (for remote execution):"
-	@echo "  make modal-build     - Build on Modal"
-	@echo "  make modal-benchmark - Run benchmark on Modal"
+	@echo "Modal Commands (32 CPU cores, persistent datasets):"
+	@echo "  make modal-setup        - Install Modal package"
+	@echo "  make modal-download      - Download dataset to Modal volume"
+	@echo "  make modal-benchmark    - Run benchmark on Modal"
+	@echo "  make modal-compare      - Compare implementations on Modal"
+	@echo "  make modal-benchmark-custom - Custom benchmark (set IMPL/DATASET)"
 
 setup:
 	@echo "Installing dependencies with uv..."
@@ -58,12 +61,29 @@ compare: build
 	@echo "Comparing implementations..."
 	uv run python scripts/benchmark.py --impl student --compare naive
 
-# Modal commands (if modal is available)
-modal-build:
-	modal run dev_on_modal.py --command=build
+# Modal commands (requires modal package)
+modal-setup:
+	@echo "Setting up Modal environment..."
+	uv sync
+	@command -v modal >/dev/null 2>&1 || { echo "Error: modal CLI not found. Installing..."; uv pip install modal; }
+	@echo "✓ Modal setup complete. Run 'modal token new' to authenticate."
+
+modal-download:
+	@echo "Downloading dataset to Modal volume..."
+	uv run modal run modal_app.py --download-only
 
 modal-benchmark:
-	modal run dev_on_modal.py --command=benchmark
+	@echo "Running benchmark on Modal (32 CPU cores)..."
+	uv run modal run modal_app.py --impl student
+
+modal-compare:
+	@echo "Comparing implementations on Modal..."
+	uv run modal run modal_app.py --impl student --compare naive
+
+modal-benchmark-custom:
+	@echo "Usage: make modal-benchmark-custom IMPL=<impl> DATASET=<dataset>"
+	@echo "Example: make modal-benchmark-custom IMPL=student DATASET=nytimes-256-angular"
+	uv run modal run modal_app.py --impl $(IMPL) --dataset $(DATASET)
 
 # Development helpers
 format:

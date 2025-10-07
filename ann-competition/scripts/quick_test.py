@@ -6,6 +6,10 @@ Tests on a small subset of data for fast feedback.
 
 import sys
 import numpy as np
+import platform
+import multiprocessing
+import subprocess
+import os
 from pathlib import Path
 
 # Add project root and build directory to path
@@ -14,6 +18,47 @@ sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "build"))
 
 from ann_cpp import ANNAlgorithm
+
+def log_system_specs():
+    """Log basic system specifications for performance context."""
+    print("\n" + "="*60)
+    print("🖥️  SYSTEM SPECIFICATIONS")
+    print("="*60)
+
+    # Basic system info
+    print(f"Platform:         {platform.platform()}")
+    print(f"Architecture:     {platform.machine()} ({platform.architecture()[0]})")
+    print(f"Processor:       {platform.processor()}")
+
+    # CPU details
+    cpu_count = multiprocessing.cpu_count()
+    print(f"CPU Cores:       {cpu_count}")
+
+    # Memory info
+    try:
+        if platform.system() == "Darwin":  # macOS
+            mem_info = subprocess.check_output(["sysctl", "-n", "hw.memsize"]).decode().strip()
+            mem_gb = int(mem_info) / (1024**3)
+            print(f"Memory:          {mem_gb:.1f} GB")
+        elif platform.system() == "Linux":
+            mem_info = subprocess.check_output(["cat", "/proc/meminfo"]).decode()
+            for line in mem_info.split('\n'):
+                if line.startswith('MemTotal'):
+                    mem_kb = int(line.split()[1])
+                    mem_gb = mem_kb / (1024**2)
+                    print(f"Memory:          {mem_gb:.1f} GB")
+                    break
+    except:
+        print("Memory:          Unknown")
+
+    # Environment detection
+    if os.environ.get('MODAL_TASK_ID'):
+        print("Environment:     Modal Cloud Platform")
+    else:
+        print("Environment:     Local Machine")
+
+    print("="*60)
+    print()
 
 
 def create_synthetic_data(n_samples=1000, dimension=128):
@@ -34,7 +79,10 @@ def create_synthetic_data(n_samples=1000, dimension=128):
 def test_algorithm(impl='student', metric='euclidean'):
     """Quick functionality test."""
     print(f"Testing {impl} implementation with {metric} metric")
-    
+
+    # Log system specifications first
+    log_system_specs()
+
     # Create test data
     print("Creating synthetic data...")
     train, test = create_synthetic_data()

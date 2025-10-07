@@ -1,0 +1,60 @@
+# Modal ignore patterns - exclude from upload to Modal
+# Similar to .gitignore but for Modal cloud uploads
+
+# Build artifacts
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Package info
+*.egg-info/
+dist/
+*.egg
+
+# Data and results (too large to upload)
+data/*.hdf5
+data/*.h5
+data/*.bin
+results/*.json
+results/*.png
+
+# Git
+.git/
+
+# UV
+.uv/
+uv.lock
+
+# CMake cache
+CMakeCache.txt
+CMakeFiles/
+
+# Other
+*.log
+
+

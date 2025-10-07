@@ -177,6 +177,7 @@ Your algorithm is scored on:
 
 ## 🛠 Available Tools
 
+### Local Development
 ```bash
 make help           # Show all commands
 make build          # Build C++ code
@@ -187,6 +188,16 @@ make test           # Full test suite
 make benchmark      # Full benchmark (real data)
 make compare        # Compare vs baseline
 ```
+
+### Cloud Benchmarking (32 CPU cores)
+```bash
+make modal-setup        # Install Modal package
+make modal-download     # Download dataset to persistent volume
+make modal-benchmark    # Run benchmark on Modal
+make modal-compare      # Compare implementations on Modal
+```
+
+**👉 See [MODAL_GUIDE.md](MODAL_GUIDE.md) for detailed cloud benchmarking guide!**
 
 ## 📊 Understanding Results
 

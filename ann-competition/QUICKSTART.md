@@ -50,6 +50,15 @@ make benchmark  # Full eval (5min)
 - Full guide: [GETTING_STARTED.md](GETTING_STARTED.md)
 - All commands: `make help`
 - Reference: `src/naive_algorithm.cpp`
+- Cloud benchmarking: [MODAL_SETUP.md](MODAL_SETUP.md)
+
+## Cloud Benchmarking (32 CPU cores)
+
+```bash
+make modal-setup     # Install Modal
+make modal-download  # Download dataset once
+make modal-benchmark # Run on 32 CPU cores
+```
 
 **That's it! Start coding! 🚀**
 

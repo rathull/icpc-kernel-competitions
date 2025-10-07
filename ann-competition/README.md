@@ -11,20 +11,27 @@ Everything else is handled by the framework!
 ### Quick Start
 
 ```bash
-# 1. Install dependencies
+# 1. Clone the repository
+git clone <repo-url> ann-competition
+cd ann-competition
+
+# 2. Install dependencies
 make setup
 
-# 2. Build your code
+# 3. Build your code
 make build
 
-# 3. Test it works
+# 4. Test it works
 make quick
 
-# 4. Benchmark on real data
+# 5. Benchmark on real data
 make benchmark
 ```
 
-**👉 New here? Read [QUICKSTART.md](QUICKSTART.md) (30 seconds) or [GETTING_STARTED.md](GETTING_STARTED.md) (complete guide)**
+**👉 New here? Read:**
+- [QUICKSTART.md](QUICKSTART.md) - 30 seconds
+- [SETUP_VERIFICATION.md](SETUP_VERIFICATION.md) - Verify your setup works
+- [GETTING_STARTED.md](GETTING_STARTED.md) - Complete guide
 
 ## 📋 What You Get
 
@@ -35,6 +42,8 @@ make benchmark
 - ✅ **Reference Implementation**: Study the naive brute-force baseline
 - ✅ **Modern Tools**: Uses `uv` for dependency management
 - ✅ **Cross-Platform**: Works on x86_64 and ARM64 (Apple Silicon)
+- ✅ **Cloud Benchmarking**: Modal integration with 32 CPU cores
+- ✅ **Persistent Storage**: Datasets cached in Modal volumes
 
 ## 🏆 Competition Metrics
 
@@ -48,6 +57,7 @@ make benchmark
 
 ## 🛠 Available Commands
 
+### Local Development
 ```bash
 make setup      # Install dependencies with uv
 make build      # Build C++ extensions
@@ -58,6 +68,18 @@ make benchmark  # Full benchmark on GIST dataset (~5min)
 make compare    # Compare your impl vs naive baseline
 make help       # Show all commands
 ```
+
+### Cloud Benchmarking (32 CPU cores)
+```bash
+# One-time authentication (after make setup)
+modal token new         # Create free Modal account (2 minutes)
+
+# Then everything is automatic!
+make modal-benchmark    # ✅ Auto-downloads dataset, runs on 32 cores
+make modal-compare      # Compare implementations on Modal
+```
+
+**👉 See [MODAL_GUIDE.md](MODAL_GUIDE.md) or [COMPLETE_WORKFLOW.md](COMPLETE_WORKFLOW.md) for details!**
 
 ## 📁 Repository Structure
 

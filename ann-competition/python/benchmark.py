@@ -11,6 +11,10 @@ Calculates:
 
 import time
 import numpy as np
+import platform
+import multiprocessing
+import subprocess
+import os
 from typing import Dict, List, Tuple
 from .metrics import calculate_recall, calculate_percentiles
 from .dataset_loader import DatasetLoader
@@ -18,10 +22,74 @@ from .dataset_loader import DatasetLoader
 
 class Benchmark:
     """Run comprehensive benchmarks on ANN algorithm."""
-    
+
     def __init__(self, dataset_name: str = "gist-960-euclidean"):
         self.loader = DatasetLoader(dataset_name)
         self.dataset = self.loader.load()
+
+    def log_system_specs(self):
+        """Log detailed system specifications for performance context."""
+        print("\n" + "="*70)
+        print("🖥️  SYSTEM SPECIFICATIONS")
+        print("="*70)
+
+        # Basic system info
+        print(f"Platform:         {platform.platform()}")
+        print(f"Architecture:     {platform.machine()} ({platform.architecture()[0]})")
+        print(f"Processor:       {platform.processor()}")
+
+        # CPU details
+        cpu_count = multiprocessing.cpu_count()
+        print(f"CPU Cores:       {cpu_count}")
+
+        # Try to get more detailed CPU info
+        try:
+            if platform.system() == "Darwin":  # macOS
+                cpu_info = subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"]).decode().strip()
+                print(f"CPU Model:       {cpu_info}")
+            elif platform.system() == "Linux":
+                cpu_info = subprocess.check_output(["cat", "/proc/cpuinfo"]).decode()
+                # Extract model name from first CPU
+                for line in cpu_info.split('\n'):
+                    if line.startswith('model name'):
+                        cpu_model = line.split(':')[1].strip()
+                        print(f"CPU Model:       {cpu_model}")
+                        break
+        except:
+            print("CPU Model:       Unknown")
+
+        # Memory info
+        try:
+            if platform.system() == "Darwin":  # macOS
+                mem_info = subprocess.check_output(["sysctl", "-n", "hw.memsize"]).decode().strip()
+                mem_gb = int(mem_info) / (1024**3)
+                print(f"Memory:          {mem_gb:.1f} GB")
+            elif platform.system() == "Linux":
+                mem_info = subprocess.check_output(["cat", "/proc/meminfo"]).decode()
+                for line in mem_info.split('\n'):
+                    if line.startswith('MemTotal'):
+                        mem_kb = int(line.split()[1])
+                        mem_gb = mem_kb / (1024**2)
+                        print(f"Memory:          {mem_gb:.1f} GB")
+                        break
+        except:
+            print("Memory:          Unknown")
+
+        # Environment detection
+        if os.environ.get('MODAL_TASK_ID'):
+            print("Environment:     Modal Cloud Platform")
+            print(f"Modal Task ID:   {os.environ.get('MODAL_TASK_ID', 'Unknown')}")
+        else:
+            print("Environment:     Local Machine")
+
+        # OpenMP info
+        try:
+            print(f"OpenMP Threads:  {os.environ.get('OMP_NUM_THREADS', 'Default')}")
+        except:
+            pass
+
+        print("="*70)
+        print()
         
     def run_full_benchmark(
         self, 
@@ -42,6 +110,9 @@ class Benchmark:
         Returns:
             Dictionary with all metrics
         """
+        # Log system specifications first
+        self.log_system_specs()
+
         print(f"Running benchmark on {self.dataset['name']}")
         print(f"  Train: {self.dataset['train'].shape}")
         print(f"  Test:  {self.dataset['test'].shape}")
