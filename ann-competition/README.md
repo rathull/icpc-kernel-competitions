@@ -2,11 +2,9 @@
 
 A complete benchmarking framework for Approximate Nearest Neighbor (ANN) algorithm competitions.
 
-## 🎯 For Competitors
+## Getting Started
 
-**You only need to edit ONE file: `src/algorithm.cpp`**
-
-Everything else is handled by the framework!
+**You only need to edit `src/algorithm.cpp` to implement your algorithm.**
 
 ### Quick Start
 
