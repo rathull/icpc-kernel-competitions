@@ -90,7 +90,7 @@ Advanced:
 - Graph pruning
 
 
-## 🎓 Credits
+## Credits
 
 Built for ACM ICPC at UCLA's Fall 2025 kernel competitions.
 
