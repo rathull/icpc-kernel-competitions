@@ -1,0 +1,37 @@
+[project]
+name = "ann-competition"
+version = "1.0.0"
+description = "ANN (Approximate Nearest Neighbor) Algorithm Competition Framework"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.24.0",
+    "h5py>=3.8.0",
+    "pybind11>=2.11.0",
+    "matplotlib>=3.7.0",
+    "scipy>=1.10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.3.0",
+    "black>=23.0.0",
+]
+modal = [
+    "modal>=1.1.4",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "pybind11>=2.11.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["python"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

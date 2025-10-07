@@ -1,0 +1,3 @@
+[submodule "tensara"]
+	path = tensara
+	url = https://github.com/tensara/tensara.git
