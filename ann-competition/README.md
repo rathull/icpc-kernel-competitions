@@ -45,8 +45,8 @@ make modal-download
 
 # 4. Run benchmark on 64 threads!
 make modal-benchmark
-
-## 💻 The Interface
+```
+## The Interface
 
 ```cpp
 class ANNAlgorithm {
