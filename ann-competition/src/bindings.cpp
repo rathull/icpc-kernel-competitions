@@ -6,8 +6,8 @@
 namespace py = pybind11;
 
 // Forward declarations for factory functions
-extern "C" ANNAlgorithm* create_naive_algorithm();
 extern "C" ANNAlgorithm* create_vectordb_kernel();
+extern "C" ANNAlgorithm* create_naive_algorithm();
 
 /**
  * Python wrapper for C++ ANNAlgorithm.

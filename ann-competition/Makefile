@@ -55,7 +55,7 @@ test: build
 
 benchmark: build
 	@echo "Running full benchmark..."
-	uv run python scripts/benchmark.py --impl vectordb --output results/benchmark_$$(date +%Y%m%d_%H%M%S).json
+	uv run python scripts/benchmark.py --impl $(or $(IMPL),vectordb) --output results/benchmark_$$(date +%Y%m%d_%H%M%S).json
 
 compare: build
 	@echo "Comparing implementations..."
@@ -74,16 +74,15 @@ modal-download:
 
 modal-benchmark:
 	@echo "Running benchmark on Modal (32 CPU cores)..."
-	uv run modal run modal_app.py --impl vectordb
+	uv run modal run modal_app.py --impl $(or $(IMPL),vectordb)
 
 modal-compare:
 	@echo "Comparing implementations on Modal..."
 	uv run modal run modal_app.py --impl vectordb --compare naive
 
 modal-benchmark-custom:
-	@echo "Usage: make modal-benchmark-custom IMPL=<impl> DATASET=<dataset>"
-	@echo "Example: make modal-benchmark-custom IMPL=vectordb DATASET=nytimes-256-angular"
-	uv run modal run modal_app.py --impl $(IMPL) --dataset $(DATASET)
+	@echo "Custom benchmark (use IMPL=<impl> DATASET=<dataset> K=<k>)"
+	uv run modal run modal_app.py --impl $(or $(IMPL),vectordb) --dataset $(or $(DATASET),gist-960-euclidean) --k $(or $(K),10)
 
 # Development helpers
 format:

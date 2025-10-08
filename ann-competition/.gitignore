@@ -11,6 +11,7 @@ env/
 .pytest_cache/
 .coverage
 htmlcov/
+ann_competition.egg-info/
 
 # C++ Build artifacts
 build/
