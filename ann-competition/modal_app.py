@@ -23,7 +23,11 @@ dataset_volume = modal.Volume.from_name(VOLUME_NAME, create_if_missing=True)
 VOLUME_MOUNT_PATH = "/data"
 
 # Define the image with all dependencies and source code
-# Note: .modalignore file automatically excludes build artifacts and cache
+# Note: Using cache-friendly ordering for faster rebuilds
+# This setup ensures reproducible builds by:
+# 1. Installing dependencies from pyproject.toml (respects uv.lock if present)
+# 2. Copying dependency files first for better layer caching
+# 3. Avoiding shipping local .venv to the cloud
 image = (
     modal.Image.debian_slim(python_version="3.12")
     .apt_install(
@@ -34,15 +38,18 @@ image = (
         "wget",
         "pybind11-dev"  # Provides CMake config for pybind11
     )
-    .pip_install(
-        "numpy>=1.24.0",
-        "h5py>=3.8.0", 
-        "pybind11>=2.11.0",
-        "matplotlib>=3.7.0",
-        "scipy>=1.10.0",
+    # Copy just dependency files first for better layer caching
+    .add_local_file("pyproject.toml", "/root/ann-competition/pyproject.toml", copy=True)
+    .add_local_file("uv.lock", "/root/ann-competition/uv.lock", copy=True)
+    .workdir("/root/ann-competition")
+    # Install deps from project metadata; respects uv.lock if present
+    .pip_install_from_pyproject("pyproject.toml")
+    # Now copy the rest of the source
+    .add_local_dir(
+        project_root,
+        remote_path="/root/ann-competition",
+        ignore=[".venv", ".git", ".github", ".pytest_cache", ".vscode", ".modalignore", "results", "venv", "pyproject.toml", "uv.lock"],
     )
-    # Add source code (respects .modalignore)
-    .add_local_dir(project_root, remote_path="/root/ann-competition")
 )
 
 def _download_dataset_internal(dataset):
@@ -120,6 +127,20 @@ def run_benchmark(impl="vectordb", dataset="gist-960-euclidean", compare=None, k
     
     # Change to project directory
     os.chdir("/root/ann-competition")
+    
+    # Create symlink from data/ to /data/ so benchmark script can find cached datasets
+    if not os.path.exists("data"):
+        os.makedirs("data", exist_ok=True)
+    if not os.path.exists("data/.linked"):
+        # Remove any existing data directory and create symlink
+        import shutil
+        if os.path.exists("data") and not os.path.islink("data"):
+            shutil.rmtree("data")
+        if not os.path.islink("data"):
+            os.symlink(VOLUME_MOUNT_PATH, "data")
+            # Create marker file to indicate this is a symlink
+            with open(f"{VOLUME_MOUNT_PATH}/.linked", "w") as f:
+                f.write("Linked from Modal volume")
     
     # Add python path
     sys.path.insert(0, "/root/ann-competition")
@@ -300,7 +321,7 @@ def download_dataset(dataset="gist-960-euclidean"):
     print(f"   Saving to: {filename}")
     print()
     result = subprocess.run(
-        ["wget", "-O", filename, url, "--progress=bar:force"]
+        ["wget", "-O", filename, url, "--progress=dot:mega"]
     )
     
     if result.returncode != 0:
