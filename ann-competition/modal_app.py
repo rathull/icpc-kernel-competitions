@@ -107,7 +107,7 @@ def _download_dataset_internal(dataset):
     memory=32768,  # 32GB RAM
     timeout=3600,  # 1 hour timeout
 )
-def run_benchmark(impl="vectordb", dataset="gist-960-euclidean", compare=None, k=10):
+def run_benchmark(impl="vectordb", dataset="gist-960-euclidean", compare=None, k=10, subset_size=None):
     """Run ANN benchmark on Modal with high-performance hardware."""
     import subprocess
     import os
@@ -232,6 +232,10 @@ def run_benchmark(impl="vectordb", dataset="gist-960-euclidean", compare=None, k
             "--k", str(k),
             "--output", f"results/modal_benchmark_{impl}.json"
         ]
+    
+    # Add subset_size parameter if provided
+    if subset_size:
+        cmd.extend(["--subset-size", str(subset_size)])
     
     # Set environment for the benchmark
     env = os.environ.copy()
@@ -358,6 +362,7 @@ def main(
     dataset: str = "gist-960-euclidean", 
     compare: str = None,
     k: int = 10,
+    subset_size: int = None,
     download_only: bool = False
 ):
     """Main entrypoint for Modal ANN benchmark."""
@@ -366,8 +371,11 @@ def main(
         print("📥 Downloading dataset only...")
         result = download_dataset.remote(dataset)
     else:
-        print("🚀 Running full benchmark...")
-        result = run_benchmark.remote(impl, dataset, compare, k)
+        if subset_size:
+            print(f"🚀 Running quick benchmark (subset size: {subset_size})...")
+        else:
+            print("🚀 Running full benchmark...")
+        result = run_benchmark.remote(impl, dataset, compare, k, subset_size)
     
     if result["success"]:
         print()

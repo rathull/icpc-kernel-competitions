@@ -23,9 +23,19 @@ from .dataset_loader import DatasetLoader
 class Benchmark:
     """Run comprehensive benchmarks on ANN algorithm."""
 
-    def __init__(self, dataset_name: str = "gist-960-euclidean"):
+    def __init__(self, dataset_name: str = "gist-960-euclidean", subset_size: int = None):
         self.loader = DatasetLoader(dataset_name)
         self.dataset = self.loader.load()
+        
+        # Apply subset if specified
+        if subset_size:
+            print(f"📊 Using dataset subset: {subset_size} vectors")
+            self.dataset['train'] = self.dataset['train'][:subset_size]
+            self.dataset['test'] = self.dataset['test'][:min(subset_size//10, len(self.dataset['test']))]
+            self.dataset['ground_truth'] = self.dataset['ground_truth'][:min(subset_size//10, len(self.dataset['ground_truth']))]
+            print(f"   Train: {self.dataset['train'].shape}")
+            print(f"   Test:  {self.dataset['test'].shape}")
+            print(f"   Ground truth: {self.dataset['ground_truth'].shape}")
 
     def log_system_specs(self):
         """Log detailed system specifications for performance context."""
@@ -226,15 +236,16 @@ class Benchmark:
         }
 
 
-def run_comparison(algorithms: List, dataset_name: str = "gist-960-euclidean"):
+def run_comparison(algorithms: List, dataset_name: str = "gist-960-euclidean", subset_size: int = None):
     """
     Compare multiple algorithms.
     
     Args:
         algorithms: List of (name, algo_instance) tuples
         dataset_name: Dataset to use
+        subset_size: Use only a subset of the dataset
     """
-    benchmark = Benchmark(dataset_name)
+    benchmark = Benchmark(dataset_name, subset_size=subset_size)
     results = []
     
     for name, algo in algorithms:

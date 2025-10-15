@@ -13,6 +13,7 @@ help:
 	@echo ""
 	@echo "Modal Commands (32 CPU cores, persistent datasets):"
 	@echo "  make modal-setup        - Install Modal package"
+	@echo "  make modal-quick        - Quick test on Modal (small dataset subset)"
 	@echo "  make modal-download      - Download dataset to Modal volume"
 	@echo "  make modal-benchmark    - Run benchmark on Modal"
 	@echo "  make modal-compare      - Compare implementations on Modal"
@@ -67,6 +68,10 @@ modal-setup:
 	uv sync
 	@command -v modal >/dev/null 2>&1 || { echo "Error: modal CLI not found. Installing..."; uv pip install modal; }
 	@echo "✓ Modal setup complete. Run 'modal token new' to authenticate."
+
+modal-quick:
+	@echo "Running quick test on Modal (small dataset subset)..."
+	uv run modal run modal_app.py --impl $(or $(IMPL),vectordb) --dataset gist-960-euclidean --k 5 --subset-size 1000
 
 modal-download:
 	@echo "Downloading dataset to Modal volume..."

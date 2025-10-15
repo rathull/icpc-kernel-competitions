@@ -54,6 +54,11 @@ def main():
         help='Save results to JSON file'
     )
     parser.add_argument(
+        '--subset-size',
+        type=int,
+        help='Use only a subset of the dataset for quick testing'
+    )
+    parser.add_argument(
         '--list-datasets',
         action='store_true',
         help='List available datasets'
@@ -87,7 +92,7 @@ def main():
     
     # Run benchmark
     if len(algorithms) == 1:
-        benchmark = Benchmark(args.dataset)
+        benchmark = Benchmark(args.dataset, subset_size=args.subset_size)
         results = benchmark.run_full_benchmark(algo, k=args.k)
         
         # Print summary
@@ -106,7 +111,7 @@ def main():
         
         results_list = [results]
     else:
-        results_list = run_comparison(algorithms, args.dataset)
+        results_list = run_comparison(algorithms, args.dataset, subset_size=args.subset_size)
     
     # Save results
     if args.output:
